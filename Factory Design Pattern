@@ -1,0 +1,39 @@
+interface Burger{
+    public void prepare();
+}
+class BasicBurger implements Burger{
+    public void prepare(){
+        System.out.println("Created Basic Burger");
+    }
+}
+class StandardBurger implements Burger{
+    public void prepare(){
+        System.out.println("Created Standard Burger");
+    }
+}
+class PremiumBurger implements Burger{
+    public void prepare(){
+        System.out.println("Created premium Burger");
+    }
+}
+class FactoryBurger{
+    public Burger createBurger(String type){
+        if(type.equals("Basic")){
+            return new BasicBurger();
+        }else if(type.equals("Standard")){
+            return new StandardBurger();
+        }else{
+            return new PremiumBurger();
+        }
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        FactoryBurger f=new FactoryBurger();
+        Burger b1=f.createBurger("Basic");
+        b1.prepare();
+        Burger b2=f.createBurger("Standard");
+        b2.prepare();
+    }
+}
