@@ -1,0 +1,61 @@
+abstract class Robot{
+    private Talkable t;
+    private Flyable f;
+    public Robot(Talkable t,Flyable f){
+        this.t=t;
+        this.f=f;
+    }
+    abstract void projection();
+    public void talk(){
+        t.talk();
+    }
+    public void fly(){
+        f.fly();
+    }
+}
+interface Talkable{
+    public void talk();
+}
+
+interface Flyable{
+    public void fly();
+}
+
+class NormalTalk implements Talkable{
+    public void talk(){
+        System.out.println("This Bird can Talk");
+    }
+}
+class NoTalk implements Talkable{
+    public void talk(){
+        System.out.println("This Bird can't Talk");
+    }
+}
+
+class NoralFly implements Flyable{
+    public void fly(){
+        System.out.println("This Bird can Fly");
+    }
+}
+class NoFly implements Flyable{
+    public void fly(){
+        System.out.println("This Bird can't Fly");
+    }
+}
+class CompositionRobot extends Robot{
+    public CompositionRobot(Talkable t, Flyable f) {
+        super(t, f);
+    }
+
+    public void projection(){
+        System.out.println("This Bird can Project");
+    }
+    
+}
+class Main {
+    public static void main(String[] args) {
+        Robot c1=new CompositionRobot(new NormalTalk(),new NoralFly());
+        c1.fly();
+        c1.talk();
+    }
+}
