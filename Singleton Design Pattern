@@ -1,0 +1,19 @@
+
+class Samosa{
+    private static Samosa samosa;
+    private Samosa(){
+    }
+    public static Samosa createSamosa(){
+        if(samosa==null){
+            samosa=new Samosa();
+        }
+        return samosa;
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        Samosa s1=Samosa.createSamosa();
+        Samosa s2=Samosa.createSamosa();
+        System.out.println(s1==s2);
+    }
+}
