@@ -1,0 +1,35 @@
+class Samosa{
+    private static Samosa samosa;
+    private static final Object lock=new Object();
+    private Samosa(){
+        
+    }
+    public static Samosa createSamosa(){
+        if(samosa==null){
+            synchronized (lock){
+                if(samosa==null){
+                    samosa=new Samosa();
+                }
+            }
+            
+        }
+        return samosa;
+    }
+    
+}
+class Main {
+    public static void main(String[] args) {
+        Runnable task = () -> {
+            Samosa s = Samosa.createSamosa();
+            System.out.println(Thread.currentThread().getName() + " -> " + s.hashCode());
+        };
+
+        Thread t1 = new Thread(task, "Thread-1");
+        Thread t2 = new Thread(task, "Thread-2");
+        Thread t3 = new Thread(task, "Thread-3");
+
+        t1.start();
+        t2.start();
+        t3.start();
+    }
+}
