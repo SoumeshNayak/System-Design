@@ -1,0 +1,29 @@
+class BankAccount {  
+    protected double amount;  
+
+    BankAccount(double amount) {  
+        this.amount = amount;  
+    }  
+
+    public void getBalance() {  
+        System.out.println("Available Balance is " + amount);  
+    }  
+}  
+
+class BankWithdrawAccount extends BankAccount {  
+    BankWithdrawAccount(double amount) {  
+        super(amount);  
+    }  
+
+    public void withDraw(double money) {  
+        if (money < amount) {  
+            amount -= money;  
+            System.out.println("Amount withdrawn: " + money);  
+        } else {  
+            System.out.println("Insufficient balance");  
+        }  
+    }  
+}  
+
+class SavingAccount extends BankWithdrawAccount {  
+    SavingAccount(double amount
