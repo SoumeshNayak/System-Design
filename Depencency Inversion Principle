@@ -1,0 +1,24 @@
+class UserController{
+    private DataBase db;
+    UserController(DataBase db){
+        this.db=db;
+    }
+    public void saveUserData(String data){
+        db.saveUserData(data);
+    }
+}
+interface DataBase{
+    void saveUserData(String data);
+}
+class SQLDb implements DataBase{
+    public void saveUserData(String data){
+        System.out.println("Saved the data"+ " " +data);
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        DataBase sql=new SQLDb();
+        UserController uc=new UserController(sql);
+        uc.saveUserData("Soumesh 24");
+    }
+}
