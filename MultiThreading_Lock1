@@ -1,0 +1,35 @@
+##Intrinsic Lock
+class BankAccount{
+    private int balance=1000;
+    public synchronized void withDraw(int amount){
+        System.out.println(Thread.currentThread().getName() + "attemting withdrawal"+ amount);
+        if(balance>=amount){
+            System.out.println(Thread.currentThread().getName() + "panding with withdrawal"+ amount);
+            try{
+                Thread.sleep(3000);
+            }catch(Exception e){
+                
+            }
+            balance-=amount;
+            System.out.println(Thread.currentThread().getName() + "remaining  with balance"+ balance);
+        }else{
+            System.out.println(Thread.currentThread().getName() + "Insufficient Balance"+ balance);
+        }
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        BankAccount b1=new BankAccount();
+        Runnable r=new Runnable(){
+            @Override
+            public void run(){
+                b1.withDraw(500);
+            }
+        };
+       Thread t1=new Thread(r,"Thread1");
+       Thread t2=new Thread(r,"Thread2");
+       t1.start();
+       t2.start();
+        
+    }
+}
