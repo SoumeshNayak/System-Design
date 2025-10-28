@@ -1,0 +1,49 @@
+# Explicit Locking USING Lock Class
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.TimeUnit;
+class BankAccount{
+    private int balance=1000;
+    private final Lock lock=new ReentrantLock();
+    public  void withDraw(int amount){
+        try {
+    if (lock.tryLock(1000, TimeUnit.MILLISECONDS)) {
+        System.out.println(Thread.currentThread().getName() + " attemting withdrawal " + amount);
+        if (balance >= amount) {
+            System.out.println(Thread.currentThread().getName() + " panding with withdrawal " + amount);
+            try {
+                Thread.sleep(10000);
+            } catch (Exception e) {
+            } finally {
+                lock.unlock();
+            }
+            balance -= amount;
+            System.out.println(Thread.currentThread().getName() + " remaining with balance " + balance);
+        } else {
+            System.out.println(Thread.currentThread().getName() + " Insufficient Balance " + balance);
+        }
+    } else {
+        System.out.println(Thread.currentThread().getName() + " Will access it later");
+    }
+} catch (Exception e) {
+}
+
+            
+        }
+}
+class Main {
+    public static void main(String[] args) {
+        BankAccount b1=new BankAccount();
+        Runnable r=new Runnable(){
+            @Override
+            public void run(){
+                b1.withDraw(500);
+            }
+        };
+       Thread t1=new Thread(r,"Thread1");
+       Thread t2=new Thread(r,"Thread2");
+       t1.start();
+       t2.start();
+        
+    }
+}
