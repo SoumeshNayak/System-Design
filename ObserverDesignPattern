@@ -1,0 +1,71 @@
+
+import java.util.ArrayList;
+import java.util.List;
+interface Isuscriber{
+    void update();
+}
+interface Ichannel{
+    void suscribe(Isuscriber s);
+    void unSuscribe(Isuscriber s);
+    void notifySub();
+}
+
+class Channel implements Ichannel{
+    private String name;
+    private String latestVideo;
+    List<Isuscriber> suscribers;
+    public Channel(String name){
+        this.name=name;
+        this.suscribers=new ArrayList<>();
+    }
+    public void suscribe(Isuscriber s){
+        suscribers.add(s);
+    } 
+    public void unSuscribe(Isuscriber s){
+        suscribers.remove(s);
+    }
+    public void notifySub(){
+        for(Isuscriber c:suscribers){
+            c.update();
+        }
+    }
+     public void uploadVideo(String title) {
+        latestVideo = title;
+        System.out.println("\n[" + name + " uploaded \"" + title + "\"]");
+        notifySub();
+    }
+    public String getVideoData() {
+        return "\nCheckout our new Video : " + latestVideo + "\n";
+    }
+}
+class Suscriber implements Isuscriber{
+    private String name;
+    private Channel channel;
+    public Suscriber(String name,Channel channel){
+        this.name=name;
+        this.channel=channel;
+    }
+    public void update(){
+       System.out.println("Hey " + name + "," + channel.getVideoData());  
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        Channel c=new Channel("LLD_BySoumesh");
+        Suscriber s1=new Suscriber("Boba",c);
+        Suscriber s2=new Suscriber("Krishna",c);
+        Suscriber s3=new Suscriber("ABC",c);
+        
+        c.suscribe(s1);
+        c.suscribe(s2);
+        c.suscribe(s3);
+        c.uploadVideo("Observer Design Patther");
+        
+        c.unSuscribe(s3);
+        c.uploadVideo("Factory Design Patther");
+
+        // Upload another video: only Tarun is notified
+        c.uploadVideo("Decorator Pattern Tutorial");
+        
+    }
+}
