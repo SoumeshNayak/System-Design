@@ -1,0 +1,98 @@
+// SINGLE RESPONSIBILITY + OPEN CLOSE PRINCIPLE
+import java.util.*;
+class Product{
+    private String name;
+    private int price;
+    Product(String name,int price){
+        this.name=name;
+        this.price=price;
+    }
+    public String getName(){
+        return name;
+    }
+    public int getPrice(){
+        return price;
+    }
+}
+class ShoppingCart{
+    private List<Product> products;
+    private int totalPrice=0;
+    ShoppingCart(){
+        this.products=new ArrayList<>();
+    }
+    public void addProduct(Product p){
+        products.add(p);
+        System.out.println("Product has been added to CART");
+    }
+    public List<Product> getProducts(){
+        return products;
+    }
+    public int getTotalPrice(){
+        int tot=0;
+        for(Product p:products){
+            tot+=p.getPrice();
+        }
+        return tot;
+    }
+}
+class CartInvoicePrinter{
+    private ShoppingCart sc;
+    
+    CartInvoicePrinter(ShoppingCart sc){
+        this.sc=sc;
+    }
+    public void printInvoice(){
+        List<Product> products=sc.getProducts();
+        for(Product p:products){
+            System.out.println("Product "+p.getName() +" Price "+p.getPrice());
+        }
+    }
+}
+interface SaveCartToDb{
+    void saveToDb();
+}
+class SaveToSql implements SaveCartToDb{
+    private ShoppingCart sc;
+    public SaveToSql(ShoppingCart sc){
+        this.sc=sc;
+    }
+    public void saveToDb(){
+        System.out.println("Saved to sql db");
+    }
+}
+class SaveToMongoDB implements SaveCartToDb{
+    private ShoppingCart sc;
+    public SaveToMongoDB(ShoppingCart sc){
+        this.sc=sc;
+    }
+    public void saveToDb(){
+        System.out.println("Saved to mongodb");
+    }
+}
+// class SaveCartToDb{
+//     private ShoppingCart sc;
+//     SaveCartToDb(ShoppingCart sc){
+//         this.sc=sc;
+//     }
+//     public void saveToDb(){
+//         System.out.println("Saved to db");
+//     }
+// }
+class Main {
+    public static void main(String[] args) {
+        Product p1=new Product("Rice",20);
+        Product p2=new Product("Potato",15);
+        ShoppingCart sc=new ShoppingCart();
+        sc.addProduct(p1);
+        sc.addProduct(p2);
+        int t=sc.getTotalPrice();
+        System.out.println(t);
+        
+        CartInvoicePrinter cip=new CartInvoicePrinter(sc);
+        cip.printInvoice();
+        
+        SaveCartToDb db=new SaveToSql(sc);
+        db.saveToDb();
+        
+    }
+}
