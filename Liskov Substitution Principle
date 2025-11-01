@@ -1,29 +1,42 @@
-class BankAccount {  
-    protected double amount;  
+//liskov substitution Principle
+abstract class NonWithDrawAccount{
+    abstract void deposit(int amount);
+}
+abstract class WithDrawaAccount extends NonWithDrawAccount{
+    abstract void withDraw(int amount);
+}
+class SavingAccount extends WithDrawaAccount{
+    private int tot_amount=0;
+    public void deposit(int amount){
+        tot_amount+=amount;
+        System.out.println("Total Amount is"+ tot_amount);
+    }
+    public void withDraw(int amount){
+        if(amount<=tot_amount){
+            tot_amount-=amount;
+            System.out.println("Balance Amount is"+ tot_amount);
+        }else{
+            System.out.println("Insufficient Balance");
+        }
+    }
 
-    BankAccount(double amount) {  
-        this.amount = amount;  
-    }  
-
-    public void getBalance() {  
-        System.out.println("Available Balance is " + amount);  
-    }  
-}  
-
-class BankWithdrawAccount extends BankAccount {  
-    BankWithdrawAccount(double amount) {  
-        super(amount);  
-    }  
-
-    public void withDraw(double money) {  
-        if (money < amount) {  
-            amount -= money;  
-            System.out.println("Amount withdrawn: " + money);  
-        } else {  
-            System.out.println("Insufficient balance");  
-        }  
-    }  
-}  
-
-class SavingAccount extends BankWithdrawAccount {  
-    SavingAccount(double amount
+}
+class FD extends NonWithDrawAccount{
+    private int tot_amount=0;
+    public void deposit(int amount){
+        tot_amount+=amount;
+        System.out.println("Total Amount is"+ tot_amount);
+    }
+}
+class Main {
+    public static void main(String[] args) {
+       WithDrawaAccount saving=new SavingAccount();
+       saving.deposit(1000);
+       saving.deposit(5000);
+       saving.withDraw(2000);
+       
+       NonWithDrawAccount f=new FD();
+       f.deposit(10000);
+       f.withDraw(200); // You will not get this method to use 
+    }
+}
