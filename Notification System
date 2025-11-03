@@ -1,0 +1,128 @@
+import java.util.*;
+abstract class Notification{
+    public abstract String getContent();
+}
+class SimpleNotification extends Notification{
+    private String data;
+    SimpleNotification(String data){
+        this.data=data;
+    }
+    public String getContent(){
+        return data;
+    }
+}
+
+abstract class NotificationDeco extends Notification{
+    protected Notification notification;
+    public NotificationDeco(Notification notification){
+        this.notification=notification;
+    }
+}
+class TimeStampDec extends NotificationDeco{
+    TimeStampDec(Notification notification){
+        super(notification);
+    }
+    public String getContent() {
+        return "[2025-04-13 14:22:00] " + notification.getContent();
+    }
+}
+class SignatureDecorator extends NotificationDeco {
+    private String signature;
+
+    public SignatureDecorator(Notification notification, String sig) {
+        super(notification);
+        this.signature = sig;
+    }
+
+    public String getContent() {
+        return notification.getContent() + "\n-- " + signature + "\n\n";
+    }
+}
+interface Observer{
+    void update();
+}
+interface  Observable{
+    void addObserver(Observer o);
+    void removeObserver(Observer o);
+    void notify();
+}
+
+class NotificationObservable implements Observable{
+    private List<Observer> observers=new ArrayList<>();
+    private Notification n;
+    
+    public void addObserver(Observer o){
+        observers.add(o);
+    }
+    public void removeObserver(Observer o){
+        observers.remove(o);
+    }
+    public void notifyObservers(){
+        for(Observer o:observers){
+            o.update();
+        }
+    }
+    public Notification getNotification(){
+        return n;
+    }
+    public void setNotification(Notification notification){
+        this.n=notification;
+        notifyObservers();
+    }
+    public String getNotificationContent(){
+        return n.getContent();
+    }
+}
+
+class Logging implements Observer{
+    NotificationObservable no;
+    Logging(NotificationObservable no){
+        this.no=no;
+    }
+    public void update() {
+        System.out.println("Logging New Notification : \n" + no.getNotificationContent());
+    }
+}
+interface NotificationStrategy{
+    void sendNotification(String content);
+}
+class EmailStrategy implements NotificationStrategy{
+    private String emailId;
+
+    public EmailStrategy(String emailId) {
+        this.emailId = emailId;
+    }
+    public void sendNotification(String content){
+        System.out.println("Sending email Notification to: " + emailId + "\n" + content);
+    }
+}
+class SMSStrategy implements NotificationStrategy {
+    private String mobileNumber;
+
+    public SMSStrategy(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public void sendNotification(String content) {
+        System.out.println("Sending SMS Notification to: " + mobileNumber + "\n" + content);
+    }
+}
+
+class NotificationEngine implements Observer{
+    NotificationStrategy nc;
+    NotificationObservable no;
+    NotificationEngine(NotificationObservable no){
+        this.no=no;
+    }
+    public void update(){
+        String notificationContent = no.getNotificationContent();
+        nc.sendNotification(notificationContent);
+    }
+}
+
+
+class Main {
+    public static void main(String[] args) {
+        // Create object
+    }
+}
