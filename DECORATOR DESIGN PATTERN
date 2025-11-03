@@ -1,0 +1,43 @@
+// DECORATOR DESIGN PATTERN USING PIZZA EXAMPLE
+abstract class BasePizza{
+    public abstract int cost();
+}
+class Farmhouse extends BasePizza{
+    public int cost(){
+        return 100;
+    }
+}
+class VegDelight extends BasePizza{
+    public int cost(){
+        return 150;
+    }
+}
+
+abstract class ToppingDecorator extends BasePizza{
+    public abstract int cost();
+}
+class ExtraCheese extends ToppingDecorator{
+    BasePizza bp;
+    ExtraCheese(BasePizza bp){
+        this.bp=bp;
+    }
+    public int cost(){
+        return bp.cost()+30;
+    }
+}
+class AddMushroom extends ToppingDecorator{
+    BasePizza bp;
+    AddMushroom(BasePizza bp){
+        this.bp=bp;
+    }
+    public int cost(){
+        return bp.cost()+50;
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        // IF I NEED PIZZA FARMHOUSE + Extra Cheez
+       BasePizza bp=new ExtraCheese(new Farmhouse());
+       System.out.println(bp.cost());
+    }
+}
