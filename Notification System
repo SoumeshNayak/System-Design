@@ -1,128 +1,162 @@
+// Decorator Design Pattern
 import java.util.*;
-abstract class Notification{
-    public abstract String getContent();
+interface INotification{
+    String getContent();
 }
-class SimpleNotification extends Notification{
+class SimpleNotification implements  INotification{
     private String data;
-    SimpleNotification(String data){
+    public SimpleNotification(String data) {
         this.data=data;
     }
-    public String getContent(){
+
+    @Override
+    public String getContent() {
         return data;
     }
 }
 
-abstract class NotificationDeco extends Notification{
-    protected Notification notification;
-    public NotificationDeco(Notification notification){
-        this.notification=notification;
-    }
+abstract class INotificationDecorator implements  INotification{
+
 }
-class TimeStampDec extends NotificationDeco{
-    TimeStampDec(Notification notification){
-        super(notification);
+class TimeStampDecorator extends INotificationDecorator {
+    private INotification n;
+    TimeStampDecorator(INotification n){
+        this.n=n;
     }
+
+    @Override
     public String getContent() {
-        return "[2025-04-13 14:22:00] " + notification.getContent();
+        return n.getContent() + "####05##11##2025###";
     }
 }
-class SignatureDecorator extends NotificationDeco {
-    private String signature;
 
-    public SignatureDecorator(Notification notification, String sig) {
-        super(notification);
-        this.signature = sig;
+class Signature extends INotificationDecorator {
+    private INotification n;
+    Signature(INotification n){
+        this.n=n;
     }
 
+    @Override
     public String getContent() {
-        return notification.getContent() + "\n-- " + signature + "\n\n";
+        return n.getContent() + "SN";
     }
 }
-interface Observer{
-    void update();
+// Observer Design Pattern
+abstract class IObserver{
+    abstract void update();
 }
-interface  Observable{
-    void addObserver(Observer o);
-    void removeObserver(Observer o);
-    void notify();
-}
+abstract class IObserveble{
 
-class NotificationObservable implements Observable{
-    private List<Observer> observers=new ArrayList<>();
-    private Notification n;
-    
-    public void addObserver(Observer o){
+    abstract void addObserver(IObserver o);
+    abstract void removeObserver(IObserver o);
+    abstract void getNotify();
+}
+class NotificationObserveble extends  IObserveble{
+    private List<IObserver> observers=new ArrayList<>();
+    private INotification notification;
+
+    @Override
+    void addObserver(IObserver o) {
         observers.add(o);
     }
-    public void removeObserver(Observer o){
+
+    @Override
+    void removeObserver(IObserver o) {
         observers.remove(o);
     }
-    public void notifyObservers(){
-        for(Observer o:observers){
+
+    @Override
+    void getNotify() {
+        for(IObserver o:observers){
             o.update();
         }
     }
-    public Notification getNotification(){
-        return n;
+    public INotification getNotification(){
+        return notification;
     }
-    public void setNotification(Notification notification){
-        this.n=notification;
-        notifyObservers();
+    public void setNotification(INotification notification){
+        this.notification=notification;
+        getNotify();
     }
     public String getNotificationContent(){
-        return n.getContent();
+        return notification.getContent();
+    }
+}
+class Logger extends IObserver{
+    NotificationObserveble n;
+    Logger(NotificationObserveble n){
+        this.n=n;
+    }
+    @Override
+    void update() {
+        System.out.println("Logging new Notification : "+ n.getNotificationContent());
     }
 }
 
-class Logging implements Observer{
-    NotificationObservable no;
-    Logging(NotificationObservable no){
-        this.no=no;
+abstract class INotificationStategy{
+    abstract void sendNotification(String content);
+}
+class EmailNotificationStrategy extends  INotificationStategy{
+    String email;
+    EmailNotificationStrategy(String email){
+        this.email=email;
     }
-    public void update() {
-        System.out.println("Logging New Notification : \n" + no.getNotificationContent());
+
+    @Override
+    void sendNotification(String content) {
+        System.out.println("Sending emial notification to "+ email + " " + content);
     }
 }
-interface NotificationStrategy{
-    void sendNotification(String content);
-}
-class EmailStrategy implements NotificationStrategy{
-    private String emailId;
-
-    public EmailStrategy(String emailId) {
-        this.emailId = emailId;
-    }
-    public void sendNotification(String content){
-        System.out.println("Sending email Notification to: " + emailId + "\n" + content);
-    }
-}
-class SMSStrategy implements NotificationStrategy {
-    private String mobileNumber;
-
-    public SMSStrategy(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
+class NotificationEngine extends IObserver{
+    NotificationObserveble n;
+    INotificationStategy ns;
+    NotificationEngine(NotificationObserveble n,INotificationStategy ns){
+        this.n=n;
+        this.ns=ns;
     }
 
-    public void sendNotification(String content) {
-        System.out.println("Sending SMS Notification to: " + mobileNumber + "\n" + content);
+    @Override
+    void update() {
+        String data=n.getNotificationContent();
+        ns.sendNotification(data);
     }
 }
+class NotificationServer{
+    private NotificationObserveble observeble;
+    private static NotificationServer instance;
+    private List<INotification> notifications=new ArrayList<>();
+    private NotificationServer(){
+        observeble=new NotificationObserveble();
+    }
+    public static NotificationServer getInstance(){
+        if(instance==null){
+            instance=new NotificationServer();
+        }
+        return instance;
+    }
+    public NotificationObserveble getObservable(){
+        return observeble;
+    }
+    public void sendNotification(INotification notification){
+        notifications.add(notification);
+        observeble.setNotification(notification);
+    }
 
-class NotificationEngine implements Observer{
-    NotificationStrategy nc;
-    NotificationObservable no;
-    NotificationEngine(NotificationObservable no){
-        this.no=no;
-    }
-    public void update(){
-        String notificationContent = no.getNotificationContent();
-        nc.sendNotification(notificationContent);
-    }
 }
 
-
-class Main {
+public class Main {
     public static void main(String[] args) {
-        // Create object
+        NotificationServer notificationServer=NotificationServer.getInstance();
+        NotificationObserveble notificationObserveble=notificationServer.getObservable();
+        Logger logger=new Logger(notificationObserveble);
+        NotificationEngine notificationEngine=new NotificationEngine(notificationObserveble,new EmailNotificationStrategy("Soumeshnayak@gmail.com"));
+
+        notificationObserveble.addObserver(logger);
+        notificationObserveble.addObserver(notificationEngine);
+
+        INotification notification=new SimpleNotification("Your Order has been shipped!");
+        notification=new TimeStampDecorator(notification);
+        
+        notificationServer.sendNotification(notification);
     }
 }
