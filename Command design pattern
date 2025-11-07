@@ -1,0 +1,83 @@
+//Command design pattern
+interface ICommand{
+    void run();
+    void undo();
+}
+
+class Fan{
+    public void on(){
+        System.out.println("Fan is Started");
+    }
+    public void off(){
+         System.out.println("Fan is off");
+    }
+}
+class Light{
+    public void on(){
+        System.out.println("Light is Started");
+    }
+    public void off(){
+         System.out.println("Light is off");
+    }
+}
+class FanCommand implements ICommand{
+    private Fan fan;
+    FanCommand(Fan fan){
+        this.fan=fan;
+    }
+    public void run(){
+        fan.on();
+    }
+    public void undo(){
+        fan.off();
+    }
+}
+class LightCommand implements ICommand{
+    private Light light;
+    LightCommand(Light light){
+        this.light=light;
+    }
+    public void run(){
+        light.on();
+    }
+    public void undo(){
+        light.off();
+    }
+}
+class RemoteControl{
+    private ICommand[] commands;
+    private boolean[] isactive;
+    private int size=4;
+    RemoteControl(){
+        this.commands=new ICommand[size];
+        this.isactive=new boolean[size];
+        for(int i=0;i<size;i++){
+        commands[i]=null;
+        isactive[i]=false;
+    }
+    }
+    
+    public void setApplience(int ind,ICommand elec){
+        if(0<=ind && ind<size){
+            commands[ind]=elec;
+        }
+    }
+    public void pressButton(int ind){
+        if(0<=ind && ind<size && !isactive[ind]){
+            ICommand button=commands[ind];
+            button.run();
+        }else if(0<=ind && ind<size && isactive[ind]){
+            ICommand button=commands[ind];
+            button.undo();
+        }
+        isactive[ind]=!isactive[ind];
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        RemoteControl rc=new RemoteControl();
+        rc.setApplience(0,new FanCommand(new Fan()));
+        rc.pressButton(0);
+         rc.pressButton(0);
+    }
+}
