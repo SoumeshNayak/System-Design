@@ -1,0 +1,31 @@
+//       ADAPTOR DESIGN PATTERN
+// The Adapter Pattern allows two incompatible interfaces to work together.
+interface IWeightInPounds{
+    int getWeight();
+}
+class WeightInPounds implements IWeightInPounds{
+    public int getWeight(){
+        return 30;
+    }
+}
+interface IWeightInKgAdaptor{
+    int getWeightInKg();
+}
+class WeightInKgAdaptor implements IWeightInKgAdaptor{
+    IWeightInPounds wp;
+    WeightInKgAdaptor(IWeightInPounds wp){
+        this.wp=wp;
+    }
+    public int getWeightInKg(){
+        int inPound=wp.getWeight();
+        return inPound*40;
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        IWeightInKgAdaptor ada=new WeightInKgAdaptor(new WeightInPounds());
+        int res=ada.getWeightInKg();
+        System.out.println(res);
+        
+    }
+}
