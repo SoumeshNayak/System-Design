@@ -1,0 +1,34 @@
+//                   PROXY DESIGN PATTERN
+// The proxy class wraps the real implementation and adds extra logic (role validation).
+
+// The client interacts only with the interface — it doesn’t know or care if it’s using a proxy.
+interface IUserDao{
+    void create(String name,int age);
+}
+class ImpUserDao implements IUserDao{
+    public void create(String name,int age){
+        System.out.println("User NAME: "+name + " Age: "+age);
+    }
+}
+class UserProxyDao implements IUserDao{
+    ImpUserDao implDao;
+    String role;
+    UserProxyDao(ImpUserDao implDao,String role){
+        this.implDao=implDao;
+        this.role=role;
+    }
+    public void create(String name,int age){
+        if(role=="Admin") implDao.create(name,age);
+        else{
+            System.out.println("You don't have access to create Usser");
+        }
+    }
+}
+class Main {
+    public static void main(String[] args) {
+        IUserDao userp=new UserProxyDao(new ImpUserDao(),"Admin");
+        userp.create("Souemsh",24);
+        IUserDao userp1=new UserProxyDao(new ImpUserDao(),"user1");
+        userp1.create("xyz",24);
+    }
+}
